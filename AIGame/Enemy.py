@@ -21,14 +21,15 @@ class Enemy(Agent):
 		return False
 
 	def calcTrackingVelocity(self, player):
-		self.target = player.center - self.center
+		"""update target vector to point where the agent is targeting"""
+		self.target = player.center
 
 	def flee_and_wander(self, player):
 		if self.isPlayerClose(player):
 			#set target pointing to player
 			self.calcTrackingVelocity(player)
 			#set velocity to direction opposite of player
-			self.velocity = self.target.scale(-1)
+			self.velocity = (self.target - self.center).scale(-1)
 		else:
 			if self.velocity.length() == 0:
 				self.velocity = Vector(random.random(), random.random())
@@ -46,7 +47,8 @@ class Enemy(Agent):
 	def draw(self, screen):
 		super().draw(screen)
 		#draw line to position targeted, aka opposite of targetted player
-		pygame.draw.line(screen, (255, 0, 0), self.center.tuple(), self.target.tuple(), 1)
+		if self.isFleeing:
+			pygame.draw.line(screen, (255, 0, 0), self.center.tuple(), self.target.tuple(), 1)
 
 	def update(self, player, worldBounds):
 		self.flee_and_wander(player)
