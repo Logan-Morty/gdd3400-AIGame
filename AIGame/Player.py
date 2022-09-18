@@ -3,36 +3,34 @@ from Agent import Agent
 import pygame
 
 class Player(Agent):
-    def draw(self, screen):
-        super().draw(screen)
+	def __init__(self, position, size, speed, color):
+		super().__init__(position, size, speed, color)
+		self.targetAgent = None
 
-    def keyboard_control(self):
-        pressed = pygame.key.get_pressed()
-        self.velocity = Vector(0,0)
+	def keyboard_control(self):
+		pressed = pygame.key.get_pressed()
+		self.velocity = Vector(0,0)
 
-        if pressed[pygame.K_w]: self.velocity.y -= 1
-        if pressed[pygame.K_s]: self.velocity.y += 1
-        if pressed[pygame.K_a]: self.velocity.x -= 1
-        if pressed[pygame.K_d]: self.velocity.x += 1
+		if pressed[pygame.K_w]: self.velocity.y -= 1
+		if pressed[pygame.K_s]: self.velocity.y += 1
+		if pressed[pygame.K_a]: self.velocity.x -= 1
+		if pressed[pygame.K_d]: self.velocity.x += 1
 
-    def seek(self, enemies):
-        closest = 0
-        if len(enemies) > 0:
-            for i in range(0, len(enemies)):
-                chaseVec = enemies[i].center - self.center
-                if chaseVec.length() < (enemies[closest].center - self.center).length():
-                    closest = i
-            self.velocity = enemies[closest].center - self.center
+	def seek(self, enemies):
+		if len(enemies) > 0:
+			self.targetAgent = enemies[0]
+			for enemy in enemies:
+				if (enemy.center - self.center).length() < (self.targetAgent.center - self.center).length():
+					self.targetAgent = enemy
+			self.velocity = self.targetAgent.center - self.center
 
+	def isInCollision(self, enemies):
+		for enemy in enemies:
+			if super().isInCollision(enemy):
+				enemies.remove(enemy)
 
-    def detectCollisions(self, enemies):
-        for enemy in enemies:
-            if self.agentRect.colliderect(enemy.agentRect) and enemy.tagged == 0:
-                self.tagged += 1
-                enemies.remove(enemy)
-
-    def update(self, enemies, worldBounds):
-        self.keyboard_control()
-        self.seek(enemies)
-        super().update(worldBounds)
-        self.detectCollisions(enemies)
+	def update(self, enemies, worldBounds):
+		self.keyboard_control()
+		self.seek(enemies)
+		self.isInCollision(enemies)
+		super().update(worldBounds)
