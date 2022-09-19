@@ -69,7 +69,6 @@ class Agent:
 		pygame.draw.line(screen, BLUE, self.center.tuple(), (self.velocity.scale(self.size.x*2) + self.center).tuple(), 2)
 		#draw boundary force from center of agent
 		if self.boundForce.tuple() != (0, 0):
-			print(self.boundForce)
 			pygame.draw.line(screen, ORANGE, self.center.tuple(), (self.center + self.boundForce.normalize().scale(-100)).tuple(), 2)
 
 	def update(self, worldBounds):
