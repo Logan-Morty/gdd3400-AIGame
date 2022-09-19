@@ -24,8 +24,8 @@
     <Compile Include="Agent.py" />
     <Compile Include="AIGame.py" />
     <Compile Include="Constants.py" />
-    <Compile Include="Enemy.py" />
-    <Compile Include="Player.py" />
+    <Compile Include="Sheep.py" />
+    <Compile Include="Dog.py" />
     <Compile Include="Vector.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

@@ -1,7 +1,7 @@
 import pygame
 from Constants import *
-from Player import Player
-from Enemy import Enemy
+from Dog import Dog
+from Sheep import Sheep
 from Vector import Vector
 import random
 
@@ -9,16 +9,17 @@ pygame.init()
 screen = pygame.display.set_mode(WORLD_SIZE)
 pygame.display.set_caption("Rectangle Tag!")
 
+sheepImage = pygame.image.load("sheep.png")
+dogImage = pygame.image.load("dog.png")
+
 quit = False
 clock = pygame.time.Clock()
 
-player = Player(Vector(WORLD_WIDTH/2, WORLD_HEIGHT/2), PLAYER_SIZE, PLAYER_SPEED, YELLOW)
-#enemy = Enemy(Vector(100, 100), ENEMY_SIZE, ENEMY_SPEED, GREEN)
-#enemy2 = Enemy(Vector(500, 500), ENEMY_SIZE, ENEMY_SPEED, GREEN)
-enemies = []
+dog = Dog(Vector(WORLD_WIDTH/2, WORLD_HEIGHT/2), dogImage, DOG_SPEED, YELLOW, DOG_TURNING_SPEED)
+sheepList = []
 for i in range(10):
-	enemies.append(Enemy(Vector(random.randint(0,WORLD_WIDTH), random.randint(0, WORLD_HEIGHT)), ENEMY_SIZE, ENEMY_SPEED, GREEN))
-drawnEnemies = enemies.copy()
+	sheepList.append(Sheep(Vector(random.randint(0,WORLD_WIDTH), random.randint(0, WORLD_HEIGHT)), sheepImage, SHEEP_SPEED, GREEN, SHEEP_TURNING_SPEED))
+drawnSheep = sheepList.copy()
 
 
 while not quit:
@@ -26,18 +27,18 @@ while not quit:
 		if event.type == pygame.QUIT:
 			quit = True
 	clock.tick(FRAME_RATE)
-	screen.fill((100, 149, 237))
+	screen.fill(BACKGROUND_COLOR)
 
 	#call agent draw and update methods here:
-	player.update(enemies, WORLD_SIZE)
+	dog.update(sheepList, WORLD_SIZE)
 
-	title = "Rectangle Tag! remaining: " + str(len(enemies))
+	title = "Rectangle Tag! remaining: " + str(len(sheepList))
 	pygame.display.set_caption(title)
 
 
-	player.draw(screen)
-	for enemy in drawnEnemies:
-		enemy.update(player, WORLD_SIZE)
-		enemy.draw(screen)
+	dog.draw(screen)
+	for sheep in drawnSheep:
+		sheep.update(dog, WORLD_SIZE)
+		sheep.draw(screen)
 
 	pygame.display.flip()

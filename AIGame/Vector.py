@@ -29,7 +29,7 @@ class Vector:
 
 	def scale(self, scalar):
 		"""return vector scaled by scalar"""
-		return Vector(self.normalize().x * scalar, self.normalize().y * scalar)
+		return Vector(self.x * scalar, self.y * scalar)
 
 	def dot(self, other):
 		"""return dot product of vector and other"""
