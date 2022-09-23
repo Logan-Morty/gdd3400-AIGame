@@ -16,7 +16,7 @@ player = Player(Vector(WORLD_WIDTH/2, WORLD_HEIGHT/2), PLAYER_SIZE, PLAYER_SPEED
 #enemy = Enemy(Vector(100, 100), ENEMY_SIZE, ENEMY_SPEED, GREEN)
 #enemy2 = Enemy(Vector(500, 500), ENEMY_SIZE, ENEMY_SPEED, GREEN)
 enemies = []
-for i in range(10):
+for i in range(100):
 	enemies.append(Enemy(Vector(random.randint(0,WORLD_WIDTH), random.randint(0, WORLD_HEIGHT)), ENEMY_SIZE, ENEMY_SPEED, GREEN))
 drawnEnemies = enemies.copy()
 
