@@ -1,6 +1,6 @@
 from Vector import Vector
 from Agent import Agent
-from Constants import *
+import Constants
 import pygame
 
 class Dog(Agent):
@@ -18,7 +18,7 @@ class Dog(Agent):
 		if pressed[pygame.K_d]: self.velocity.x += 1
 
 	def updateForces(self):
-		self.seekForce = (self.targetAgent.center - self.center).normalize().scale(SEEK_WEIGHT)
+		self.seekForce = (self.targetAgent.center - self.center).normalize().scale(Constants.SEEK_WEIGHT)
 		self.target = self.seekForce
 
 	def seek(self, agents):

@@ -1,5 +1,5 @@
 from Vector import Vector
-from Constants import *
+import Constants
 import pygame
 import math
 
@@ -7,7 +7,7 @@ class Agent:
 	def __init__(self, position, image, speed, color, turning_speed):
 		self.position = position
 		self.angle = 0
-		self.size = Vector(AGENT_WIDTH, AGENT_HEIGHT)
+		self.size = Vector(Constants.AGENT_WIDTH, Constants.AGENT_HEIGHT)
 		self.image = image
 		self.speed = speed
 		self.velocity = Vector(0, 0)
@@ -53,23 +53,25 @@ class Agent:
 
 	def calcBoundaryForce(self):
 		self.boundForce = Vector(0, 0)
-		boundDist = [self.center.x, WORLD_WIDTH - self.center.x, self.center.y, WORLD_HEIGHT - self.center.y]
+		boundDist = [self.center.x, Constants.WORLD_WIDTH - self.center.x, self.center.y, Constants.WORLD_HEIGHT - self.center.y]
 		for i in range(len(boundDist)):
-			if boundDist[i] < BOUNDARY_THRESHOLD:
-				self.boundForce += BOUNDARY_NORMAL_VECTORS[i].scale(BOUNDARY_THRESHOLD - boundDist[i])
-		self.boundForce = self.boundForce.scale(BOUNDARY_WEIGHT)
+			if boundDist[i] < Constants.BOUNDARY_THRESHOLD:
+				self.boundForce += Constants.BOUNDARY_NORMAL_VECTORS[i].scale(Constants.BOUNDARY_THRESHOLD - boundDist[i])
+		self.boundForce = self.boundForce.scale(Constants.BOUNDARY_WEIGHT * int(Constants.ENABLE_BOUNDARIES))
 		self.target += self.boundForce
 
 	def draw(self, screen):
 		#draw agentRect
-		pygame.draw.rect(screen, self.color, self.agentRect)
+		if Constants.DEBUG_BOUNDING_RECTS:
+			pygame.draw.rect(screen, self.color, self.agentRect, width=2)
 		#draw agent's image
 		screen.blit(self.surf, self.upperLeft.tuple())
 		#draw velocity vector from center of agent
-		pygame.draw.line(screen, BLUE, self.center.tuple(), (self.velocity.scale(self.size.x*2) + self.center).tuple(), 2)
+		if Constants.DEBUG_VELOCITY:
+			pygame.draw.line(screen, Constants.BLUE, self.center.tuple(), (self.velocity.scale(self.size.x*2) + self.center).tuple(), 2)
 		#draw boundary force from center of agent
-		if self.boundForce.tuple() != (0, 0):
-			pygame.draw.line(screen, ORANGE, self.center.tuple(), (self.center + self.boundForce.normalize().scale(-100)).tuple(), 2)
+		if self.boundForce.tuple() != (0, 0) and Constants.DEBUG_BOUNDARIES:
+			pygame.draw.line(screen, Constants.ORANGE, self.center.tuple(), (self.center + self.boundForce.normalize().scale(-100)).tuple(), 2)
 
 	def update(self, worldBounds):
 		self.calcBoundaryForce()

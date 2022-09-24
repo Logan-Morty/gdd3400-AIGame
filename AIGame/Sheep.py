@@ -1,5 +1,5 @@
 from Vector import Vector
-from Constants import *
+import Constants
 from Agent import Agent
 import pygame
 import random
@@ -14,7 +14,7 @@ class Sheep(Agent):
 		self.isFleeing = not self.isFleeing
 
 	def isPlayerClose(self, player):
-		if (player.center - self.center).length() < MIN_ATTACK_DIST:
+		if (player.center - self.center).length() < Constants.MIN_ATTACK_DIST:
 			self.isFleeing = True
 			return True
 		self.isFleeing = False
@@ -25,38 +25,40 @@ class Sheep(Agent):
 		self.targetAgentVector = player.center
 
 	def updateForces(self):
-		if self.isFleeing:
-			self.fleeWanderForce = self.fleeWanderForce.normalize().scale(FLEE_WEIGHT)
+		if self.isFleeing or True:
+			self.fleeWanderForce = self.fleeWanderForce.normalize().scale(Constants.FLEE_WEIGHT * int(Constants.ENABLE_DOG))
 		else:
-			self.fleeWanderForce = self.fleeWanderForce.normalize().scale(WANDER_WEIGHT)
+			#this applies the wander force, disabled to make way for flocking forces
+			self.fleeWanderForce = self.fleeWanderForce.normalize().scale(Constants.WANDER_WEIGHT)
 		self.target = self.fleeWanderForce
 
 	def flee_and_wander(self, player):
-		if self.isPlayerClose(player):
+		if self.isPlayerClose(player) or True:
 			#set targetAgentVector pointing to player
 			self.calcTrackingVelocity(player)
 			#set velocity to direction opposite of player
 			self.fleeWanderForce = (self.targetAgentVector - self.center).scale(-1)
 		else:
-			if self.velocity.length() == 0:
+			#This is the wander force, disabled to make way for flocking forces
+			'''if self.velocity.length() == 0:
 				self.fleeWanderForce = Vector(random.random(), random.random())
 			else:
 				#set wanderVec perp to velocity and scale by random length then add to velocity to get new direction
 				wanderVec = Vector(-self.velocity.y, self.velocity.x)
-				wanderVec = wanderVec.scale((random.random()*WANDER_VECTOR_LENGTH) - (WANDER_VECTOR_LENGTH/2))
-				self.fleeWanderForce = self.velocity + wanderVec
+				wanderVec = wanderVec.scale((random.random()*Constants.WANDER_VECTOR_LENGTH) - (Constants.WANDER_VECTOR_LENGTH/2))
+				self.fleeWanderForce = self.velocity + wanderVec'''
 		self.updateForces()
 
 	def isInCollision(self, player):
 		#this could be updated to be called by player to prevent additional detections
 		if super().isInCollision(player):
-			self.color = RED
+			self.color = Constants.RED
 
 	def draw(self, screen):
 		super().draw(screen)
 		#draw line to position targetAgentVector, aka opposite of targetAgent
-		if self.isFleeing:
-			pygame.draw.line(screen, RED, self.center.tuple(), self.targetAgentVector.tuple(), 1)
+		if self.isFleeing and Constants.DEBUG_DOG_INFLUENCE:
+			pygame.draw.line(screen, Constants.RED, self.center.tuple(), self.targetAgentVector.tuple(), 1)
 
 	def update(self, player, worldBounds):
 		self.flee_and_wander(player)
