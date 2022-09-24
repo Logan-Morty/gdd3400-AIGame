@@ -17,7 +17,7 @@ clock = pygame.time.Clock()
 
 dog = Dog(Vector(Constants.WORLD_WIDTH/2, Constants.WORLD_HEIGHT/2), dogImage, Constants.DOG_SPEED, Constants.YELLOW, Constants.DOG_TURNING_SPEED)
 sheepList = []
-for i in range(1000):
+for i in range(Constants.NUM_SHEEP):
 	sheepList.append(Sheep(Vector(random.randint(0,Constants.WORLD_WIDTH), random.randint(0, Constants.WORLD_HEIGHT)), sheepImage, Constants.SHEEP_SPEED, Constants.GREEN, Constants.SHEEP_TURNING_SPEED))
 drawnSheep = sheepList.copy()
 
@@ -107,8 +107,15 @@ while not quit:
 
 
 	dog.draw(screen)
+	i = 0
 	for sheep in drawnSheep:
-		sheep.update(dog, Constants.WORLD_SIZE)
-		sheep.draw(screen)
+		neighborhood = []
+		for neighbor in drawnSheep:
+			if neighbor is not sheep:
+				if (sheep.center - neighbor.center).length() < Constants.SHEEP_NEIGHBOR_RADIUS:
+					neighborhood.append(neighbor)
+
+		sheep.update(dog, Constants.WORLD_SIZE, neighborhood)
+		sheep.draw(screen, neighborhood)
 
 	pygame.display.flip()
